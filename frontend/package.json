@@ -1,0 +1,41 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "test": "vitest run",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "compile:electron": "tsc -p electron/tsconfig.json",
+    "build:desktop": "tsc -b && vite build && tsc -p electron/tsconfig.json",
+    "dev:desktop": "cross-env NODE_ENV=development concurrently -k \"vite\" \"wait-on tcp:5173 && tsc -p electron/tsconfig.json && electron .\"",
+    "package:dir": "npm run build:desktop && electron-builder --dir --config electron-builder.json",
+    "package:dist": "npm run build:desktop && electron-builder --config electron-builder.json"
+  },
+  "dependencies": {
+    "lucide-react": "^1.31.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^40.8.0",
+    "electron-builder": "^26.15.3",
+    "jsdom": "^30.0.1",
+    "oxlint": "^1.75.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.10",
+    "wait-on": "^9.0.4"
+  }
+}
