@@ -10,6 +10,7 @@ from app.vision.adapters.object_detector import ObjectDetectorAdapter
 from app.vision.adapters.planner_context_builder import VisionPlannerContextBuilder
 from app.vision.adapters.scene_analyzer import SceneAnalyzerAdapter
 from app.vision.adapters.tracker import VisionTrackerAdapter
+from app.vision.adapters.yolo_onnx_detector import YOLOONNXDetector
 from app.vision.base import (
     IFaceDetector,
     IMotionDetector,
@@ -197,6 +198,7 @@ __all__ = [
     "VisionProcessor",
     "CameraCaptureAdapter",
     "ObjectDetectorAdapter",
+    "YOLOONNXDetector",
     "VisionTrackerAdapter",
     "SceneAnalyzerAdapter",
     "VisionPlannerContextBuilder",

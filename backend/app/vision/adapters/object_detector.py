@@ -78,7 +78,7 @@ class ObjectDetectorAdapter(IObjectDetector):
                 return
 
             try:
-                import onnxruntime as ort  # type: ignore[import-not-found]
+                import onnxruntime as ort  # type: ignore[import-not-found,import-untyped]
 
                 providers = ["CPUExecutionProvider"]
                 if self.config.device == "cuda":

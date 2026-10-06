@@ -7,16 +7,18 @@ Strictly eliminates ad-hoc conditional provider checks across application domain
 
 import logging
 
+from app.audio.adapters.faster_whisper_stt import FasterWhisperSTT
 from app.audio.adapters.microphone import MicrophoneCaptureAdapter
 from app.audio.adapters.mock_playback import MockPlaybackAdapter
+from app.audio.adapters.piper_tts import PiperTTSProvider
 from app.audio.adapters.real_stt import RealSTTProvider
 from app.audio.adapters.real_tts import RealTTSProvider
-from app.audio.adapters.sounddevice_capture import SoundDeviceCaptureAdapter
-from app.audio.adapters.sounddevice_playback import SoundDevicePlaybackAdapter
 from app.audio.adapters.stt import STTAdapter
 from app.audio.adapters.tts import TTSAdapter
 from app.audio.adapters.vad import VADAdapter
 from app.audio.adapters.wake_word import WakeWordAdapter
+from app.audio.adapters.windows_audio_capture import WindowsAudioCaptureDevice
+from app.audio.adapters.windows_audio_playback import WindowsAudioPlaybackDevice
 from app.audio.base import (
     IAudioCapture,
     IAudioPlayback,
@@ -68,6 +70,11 @@ class AudioEngineFactory:
         stt_config = create_stt_config(cfg)
 
         logger.info(f"AudioEngineFactory: Constructing STT provider '{provider_name}'.")
+        if provider_name in ("faster_whisper", "local", "offline", "local_whisper"):
+            return FasterWhisperSTT(
+                config=stt_config,
+                simulated_mode=(cfg.ULTRON_ENV == "testing"),
+            )
         if provider_name in ("real", "whisper_api", "openai_whisper"):
             return RealSTTProvider(config=stt_config, settings=cfg)
         return STTAdapter(config=stt_config)
@@ -80,6 +87,11 @@ class AudioEngineFactory:
         tts_config = create_tts_config(cfg)
 
         logger.info(f"AudioEngineFactory: Constructing TTS provider '{provider_name}'.")
+        if provider_name in ("piper", "local", "offline", "local_piper"):
+            return PiperTTSProvider(
+                config=tts_config,
+                simulated_mode=(cfg.ULTRON_ENV == "testing"),
+            )
         if provider_name in ("real", "openai_tts", "elevenlabs"):
             return RealTTSProvider(config=tts_config, settings=cfg)
         return TTSAdapter(config=tts_config)
@@ -88,16 +100,16 @@ class AudioEngineFactory:
     def create_audio_capture(settings: Settings | None = None) -> IAudioCapture:
         """Constructs IAudioCapture based on system environment."""
         cfg = settings or get_settings()
-        logger.info("AudioEngineFactory: Constructing SoundDevice capture adapter.")
+        logger.info("AudioEngineFactory: Constructing WindowsAudioCaptureDevice adapter.")
         if cfg.ULTRON_ENV == "testing":
             return MicrophoneCaptureAdapter(mock_mode=True)
-        return SoundDeviceCaptureAdapter()
+        return WindowsAudioCaptureDevice()
 
     @staticmethod
     def create_audio_playback(settings: Settings | None = None) -> IAudioPlayback:
         """Constructs IAudioPlayback based on system environment."""
         cfg = settings or get_settings()
-        logger.info("AudioEngineFactory: Constructing SoundDevice playback adapter.")
+        logger.info("AudioEngineFactory: Constructing WindowsAudioPlaybackDevice adapter.")
         if cfg.ULTRON_ENV == "testing":
             return MockPlaybackAdapter()
-        return SoundDevicePlaybackAdapter()
+        return WindowsAudioPlaybackDevice()

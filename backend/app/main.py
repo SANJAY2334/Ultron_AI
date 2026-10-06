@@ -82,6 +82,17 @@ def create_application() -> FastAPI:
     # Mount Master API Router
     app.include_router(api_router, prefix=settings.ULTRON_API_PREFIX)
 
+    @app.get("/", tags=["System"])
+    async def root_status():
+        return {
+            "status": "online",
+            "name": "PROJECT ULTRON AI Kernel",
+            "version": __version__,
+            "docs_url": "/docs",
+            "api_prefix": settings.ULTRON_API_PREFIX,
+            "frontend_url": "http://localhost:5173",
+        }
+
     return app
 
 

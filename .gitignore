@@ -66,3 +66,8 @@ Thumbs.db
 *.p12
 *.pfx
 *.kdbx
+
+# Large Model Weights (>100MB GitHub limit)
+*.safetensors
+*.gguf
+
